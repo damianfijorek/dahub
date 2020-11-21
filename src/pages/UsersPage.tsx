@@ -54,17 +54,21 @@ const UsersPage = () => {
   return (
     <>
       <h1>GitHub users</h1>
-      <UsersList users={state.currentUsers} />
-      <Pagination
-        responsive
-        size="small"
-        current={pagerState.page}
-        onChange={onPageChange}
-        pageSize={pagerState.pageSize}
-        pageSizeOptions={["10", "20", "50"]}
-        onShowSizeChange={onPageSizeChange}
-        total={state.pages * pagerState.pageSize}
-      />
+      {state.currentUsers && (
+        <>
+          <UsersList users={state.currentUsers} />
+          <Pagination
+            responsive
+            size="small"
+            current={pagerState.page}
+            onChange={onPageChange}
+            pageSize={pagerState.pageSize}
+            pageSizeOptions={["10", "20", "50"]}
+            onShowSizeChange={onPageSizeChange}
+            total={state.pages * pagerState.pageSize}
+          />
+        </>
+      )}
     </>
   );
 };

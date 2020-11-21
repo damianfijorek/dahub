@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { User } from "../model/User";
 import { Avatar, List } from "antd";
 
@@ -11,7 +12,9 @@ const UsersList = ({ users }: Props) => (
     dataSource={users}
     renderItem={(user) => (
       <List.Item key={user.id}>
-        <List.Item.Meta avatar={<Avatar src={user.avatarUrl} />} title={user.login} />
+        <Link to={`/user/${user.login}`}>
+          <List.Item.Meta avatar={<Avatar src={user.avatarUrl} />} title={user.login} />
+        </Link>
       </List.Item>
     )}
   />
