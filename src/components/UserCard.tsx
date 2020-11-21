@@ -1,9 +1,10 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Button, Card, Space, Typography } from "antd";
 import { ArrowLeftOutlined, EnvironmentTwoTone, MailTwoTone } from "@ant-design/icons";
 import { UserDetails } from "../model/User";
 
-const { Link, Text, Title } = Typography;
+const { Text, Title } = Typography;
 
 interface Props {
   user: UserDetails;
@@ -13,9 +14,11 @@ const UsersComponent = ({ user }: Props) => (
   <Card
     cover={<img alt="" src={user.avatarUrl} />}
     actions={[
-      <Button type="primary" icon={<ArrowLeftOutlined />} href="/">
-        Back
-      </Button>,
+      <Link to="/">
+        <Button type="primary" icon={<ArrowLeftOutlined />}>
+            Back
+        </Button>
+      </Link>,
     ]}
   >
     <Space direction="vertical">
@@ -28,7 +31,7 @@ const UsersComponent = ({ user }: Props) => (
       )}
       {user.email && (
         <Text>
-          <MailTwoTone /> <Link href={`mailto:${user.email}`}>{user.email}</Link>
+          <MailTwoTone /> <Typography.Link href={`mailto:${user.email}`}>{user.email}</Typography.Link>
         </Text>
       )}
     </Space>
