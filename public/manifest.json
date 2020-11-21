@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "DaHub",
+  "name": "List of GitHub users.",
   "icons": [
     {
       "src": "favicon.ico",
