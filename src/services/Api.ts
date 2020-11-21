@@ -9,6 +9,10 @@ export function isFailure(response: any | Failure): response is Failure {
   return response && "message" in response;
 }
 
+function toFailure(e: any) {
+  return isFailure(e?.response?.data) ? e.response.data : { message: "Unknown error occured. Please try again." };
+}
+
 interface UserResult {
   id: number;
   login: string;
@@ -33,6 +37,12 @@ interface SearchUsersResult {
 
 interface SearchUsersSuccessResponse {
   items: UserResult[];
+}
+
+interface UserDetailsResult extends UserResult {
+  name: string;
+  email: string;
+  location: string;
 }
 
 export default abstract class Api {
@@ -61,7 +71,15 @@ export default abstract class Api {
         },
       };
     } catch (e) {
-      return isFailure(e?.response?.data) ? e.response.data : { message: "Unknown error occured. Please try again." };
+      return toFailure(e);
+    }
+  }
+
+  public static async getUser(login: string): Promise<UserDetailsResult | Failure> {
+    try {
+      return (await axios.get<UserDetailsResult>(`https://api.github.com/users/${login}`)).data;
+    } catch (e) {
+      return toFailure(e);
     }
   }
 }
