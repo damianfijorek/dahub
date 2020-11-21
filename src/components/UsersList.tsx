@@ -10,8 +10,8 @@ const UsersList = ({ users }: Props) => (
   <List
     dataSource={users}
     renderItem={(user) => (
-      <List.Item>
-        <List.Item.Meta avatar={<Avatar src={user.avatarUrl} />} title={user.login}/>
+      <List.Item key={user.id}>
+        <List.Item.Meta avatar={<Avatar src={user.avatarUrl} />} title={user.login} />
       </List.Item>
     )}
   />

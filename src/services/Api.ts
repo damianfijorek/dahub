@@ -1,11 +1,12 @@
 import axios from "axios";
+import parse from "parse-link-header";
 
 export interface Failure {
   message: string;
 }
 
 export function isFailure(response: any | Failure): response is Failure {
-  return "message" in response;
+  return response && "message" in response;
 }
 
 interface UserResult {
@@ -14,15 +15,51 @@ interface UserResult {
   avatar_url: string;
 }
 
+interface Page {
+  page: number;
+  url: string;
+}
+
+interface Pages {
+  next?: Page;
+  prev?: Page;
+  last?: Page;
+}
+
+interface SearchUsersResult {
+  users: UserResult[];
+  pages: Pages;
+}
+
 interface SearchUsersSuccessResponse {
   items: UserResult[];
 }
 
 export default abstract class Api {
-  public static async getUsers(): Promise<UserResult[] | Failure> {
+  public static async getUsers(page: number, pageSize: number): Promise<SearchUsersResult | Failure> {
     try {
-      var response = await axios.get<SearchUsersSuccessResponse>(`https://api.github.com/search/users?q=type:user`);
-      return response.data.items;
+      const url = `https://api.github.com/search/users?q=type:user&page=${page}&per_page=${pageSize}`;
+      const response = await axios.get<SearchUsersSuccessResponse>(url);
+      const users = response.data.items;
+      const links = parse(response.headers["link"]);
+      if (!links)
+        return {
+          users,
+          pages: {
+            last: { page: 1, url },
+          },
+        };
+      const next = links["next"];
+      const prev = links["prev"];
+      const last = links["last"];
+      return {
+        users,
+        pages: {
+          next: next ? { url: next.url, page: parseInt(next["page"]) } : undefined,
+          prev: prev ? { url: prev.url, page: parseInt(prev["page"]) } : undefined,
+          last: last ? { url: last.url, page: parseInt(last["page"]) } : undefined,
+        },
+      };
     } catch (e) {
       return isFailure(e?.response?.data) ? e.response.data : { message: "Unknown error occured. Please try again." };
     }
